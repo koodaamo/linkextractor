@@ -29,6 +29,9 @@ setup(name='linkextractor',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
+          "pytidylib",
+          "BeautifulSoup",
+          "lxml"
           # -*- Extra requirements: -*-
       ],
       entry_points="""

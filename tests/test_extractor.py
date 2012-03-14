@@ -1,38 +1,32 @@
+import copy
 from linkextractor import *
 
-import BeautifulSoup
 
-html1 = """
-<html>
-   <head><base href="http://some.net"/></head>
-   <body>
-      <p>test</p>
-      <img src="http://1"/>
-      <link rel="stylesheet" href="http://2"></link>
-      <STYLE TYPE="text/css" MEDIA="screen, projection">
-      <!--
-        @import url(http://www.htmlhelp.com/style.css);
-        @import url('stylesheets/punk.css');
-        @import url("http://www.htmlhelp2.com/2style.css");
-        DT { background: yellow; color: black }
-      -->
-      </STYLE>
+base_url = "http://some.net"
+import_css_links = ["http://www.htmlhelp.com/style.css", "stylesheets/punk.css", "http://www.htmlhelp2.com/2style.css"]
+img_links = ["http://1"]
+rel_stylesheet = "http://2"
 
-   </body>
-</html>
-"""
+SOURCE = open("tests/source.html").read()
+EXPANDED = open("tests/expanded.html").read()
 
-testdata = [html1]
+def test_baseurl(html=SOURCE):
+   assert get_baseurl(html) == base_url
 
-def test_baseurl(html):
-   assert get_baseurl(html) == "http://some.net"
+def test_cssimport(html=SOURCE):
+   assert extract_css_imports(html) == import_css_links
 
-def test_cssimport(html):
-   assert extract_css_imports(html) == ["http://www.htmlhelp.com/style.css"]
-   
-if __name__=="__main__":
-   print "extracts:\n", extract_resourceurls(html)
-   print "expander:\n", expand_urls(html, base="http:/test.fi")
+def test_resourceurls(html=SOURCE):
+   assert extract_resourceurls(html) == img_links + [rel_stylesheet] + import_css_links  
+
+def test_expander(html=SOURCE):
+   expanded = copy.copy(import_css_links)
+   expanded[1] = base_url + "/" + expanded[1]
+   result = img_links + [rel_stylesheet] + expanded
+   assert expand_urls(html) == result
+
+def test_replacelinks(html=SOURCE):
+   transformed_html = ""
    html, links = replace_links(html, replacer = lambda x: "XYZ")
-   print html
-   print links
+   assert html == EXPANDED
+   
