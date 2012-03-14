@@ -1,6 +1,8 @@
 linkextractor - HTML link extraction
 =====================================
 
+UNDER DEVELOPMENT. NOT READY FOR USE.
+
 This library aims to provide means for extracting links from both HTML
 and plain text. For that, it uses a combination of lxml, BeautifulSoup and
 regular expressions.
